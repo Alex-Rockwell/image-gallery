@@ -5,10 +5,7 @@ import Gallery from './Gallery';
 function App() {
   return (
     <div className="App">
-      <h1>Hello</h1>
       <Gallery/>
-      
-
       {/* <UI_kit/> */}
     </div>
   );

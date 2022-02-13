@@ -39,7 +39,6 @@ function Pagination_c({elementsPerPage, totalElements, paginate}) {
           </li>
           {pageNumbers.map(number => {
             return (
-              <>
                 <li 
                   key={number} 
                   className={`pagination__item ${(number === currentPage) ? 'pagination__item--active' : 'pagination__item--hoverable'}`}
@@ -47,7 +46,6 @@ function Pagination_c({elementsPerPage, totalElements, paginate}) {
                 >
                     {number}
                 </li>
-              </>
             )
           })}
           <li onClick={() => setCurrentPage(prev => prev + 1)} className={classEndBtns}>

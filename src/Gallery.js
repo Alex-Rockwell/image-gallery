@@ -1,10 +1,11 @@
 import axios from "axios";
-import { Pagination } from "fwt-internship-uikit";
+// import { Pagination } from "fwt-internship-uikit";
 import { useEffect, useState } from "react"
 import { v4 as uuidv4 } from 'uuid';
 import Card from "./Card"
+import Filters from "./Filters";
 import Pagination_c from "./Pagination_c";
-import UI_kit from "./UI_kit";
+// import UI_kit from "./UI_kit";
 
 
 
@@ -15,6 +16,7 @@ function Gallery() {
   const [isLoading, setIsLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [elementsPerPage, setElementsPerPage] = useState(9)
+  const [elements, setElements] = useState([...paintings])
 
   // Loading data
   useEffect(() => {
@@ -31,7 +33,7 @@ function Gallery() {
     getPaintings()
   }, [])
   
-  console.log('Use effect-1 paintings', paintings)
+  // console.log('Use effect-1 paintings', paintings)
 
   // Add authors and locations
   useEffect(() => {
@@ -53,42 +55,59 @@ function Gallery() {
     })
   }, [locations])
 
+  
+  const loader = <h1>Loading...</h1>
+  
   // Create elements
-  const paintingsEls = paintings.map(el => <Card 
+  useEffect(() => {
+    setElements(paintings)
+  }, [paintings, authors, locations])
+        
+  const paintingsEls = elements.map(el => <Card 
     key={uuidv4()} 
     imageUrl={el.imageUrl} 
     cardName={el.name}
     isLoading={isLoading}
   />)
 
-  const loader = <h1>Loading...</h1>
-
   // Get elements to display on current page
   const indexOfLastElt = currentPage * elementsPerPage
   const indexOfFirstElt = indexOfLastElt - elementsPerPage
   const currentElts = paintingsEls.slice(indexOfFirstElt, indexOfLastElt)
-
+  
   // Change page
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber)
+  }
+  
+  // Filter
+  const filterByName = (str) => {
+    setElements(paintings.filter((el) => {
+      if (str === '') {
+        return el
+      } else if (el.name.toLowerCase().includes(str.toLowerCase())) {
+        return el
+      }
+    }))
   }
 
 
 
   return (
-    <div>
+    <div className="container">
+      <Filters 
+        filterByName={filterByName}
+        authors={authors}
+      />
       <div className="gallery__card-container">
         {isLoading ? loader : currentElts}
       </div>
-      <div>
-        <Pagination_c 
-          elementsPerPage={elementsPerPage} 
-          totalElements={paintings.length}
-          paginate={paginate}
-        />
-      </div>
-      <p>{JSON.stringify(paintings)}</p>
-      <UI_kit></UI_kit>
+      <Pagination_c 
+        elementsPerPage={elementsPerPage} 
+        totalElements={paintings.length}
+        paginate={paginate}
+      />
+      <p style={{fontSize: '20px'}}>{JSON.stringify(paintings)}</p>
     </div>
   )
 }
