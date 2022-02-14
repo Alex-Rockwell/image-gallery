@@ -1,7 +1,8 @@
 import { useState } from "react"
+import Dropdown from './Dropdown'
 
 
-function Filters({filterByName, authors}) {
+function Filters({filterByName, authors, filterByAuthor}) {
   const [searchName, setSearchName] = useState('')
   const handleSearchName = (e) => {
     setSearchName(e.target.value)
@@ -12,25 +13,14 @@ function Filters({filterByName, authors}) {
     <div className="filters">
 
       <input 
-        className="filters__element" 
+        className="filters__search-input" 
         type='text' 
         placeholder="Name" 
         onChange={handleSearchName}
         value={searchName}
       />
 
-      <select className="filters__element">
-        <option>Author</option>
-        {authors.map(el => <option>{el.name}</option>)} 
-      </select>
-
-      <select className="filters__element">
-        <option>Location</option>
-      </select>
-
-      <select className="filters__element">
-        <option>Created</option>
-      </select>
+      <Dropdown optionsList={authors} title={'Author'} filter={filterByAuthor}/>
 
     </div>
   )

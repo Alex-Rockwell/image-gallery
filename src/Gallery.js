@@ -90,6 +90,15 @@ function Gallery() {
       }
     }))
   }
+  const filterByAuthor = (id) => {
+    setElements(paintings.filter((el) => {
+      if (!id) {
+        return el
+      } else if (id === el.authorId) {
+        return el
+      }
+    }))
+  }
 
 
 
@@ -98,6 +107,7 @@ function Gallery() {
       <Filters 
         filterByName={filterByName}
         authors={authors}
+        filterByAuthor={filterByAuthor}
       />
       <div className="gallery__card-container">
         {isLoading ? loader : currentElts}
@@ -107,7 +117,19 @@ function Gallery() {
         totalElements={paintings.length}
         paginate={paginate}
       />
+
+
+      <br/>
+      <br/>
+      <br/>
       <p style={{fontSize: '20px'}}>{JSON.stringify(paintings)}</p>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <p style={{fontSize: '20px'}}>{JSON.stringify(authors)}</p>
     </div>
   )
 }
