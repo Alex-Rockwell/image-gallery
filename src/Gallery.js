@@ -1,11 +1,10 @@
 import axios from "axios";
-// import { Pagination } from "fwt-internship-uikit";
 import { useEffect, useState } from "react"
 import { v4 as uuidv4 } from 'uuid';
 import Card from "./Card"
 import Filters from "./Filters";
 import Pagination_c from "./Pagination_c";
-// import UI_kit from "./UI_kit";
+import './Gallery.css'
 
 
 
@@ -19,6 +18,7 @@ function Gallery() {
   const [elements, setElements] = useState([...paintings])
 
   // Loading data
+
   useEffect(() => {
     async function getPaintings() {
       setIsLoading(true)
@@ -36,6 +36,7 @@ function Gallery() {
   // console.log('Use effect-1 paintings', paintings)
 
   // Add authors and locations
+
   useEffect(() => {
     setPaintings((prev) => {
       const newarr = prev.map(p => {
@@ -59,6 +60,7 @@ function Gallery() {
   const loader = <h1>Loading...</h1>
   
   // Create elements
+
   useEffect(() => {
     setElements(paintings)
   }, [paintings, authors, locations])
@@ -70,17 +72,25 @@ function Gallery() {
     isLoading={isLoading}
   />)
 
-  // Get elements to display on current page
+  // Pagination values
+
   const indexOfLastElt = currentPage * elementsPerPage
   const indexOfFirstElt = indexOfLastElt - elementsPerPage
   const currentElts = paintingsEls.slice(indexOfFirstElt, indexOfLastElt)
+
+  const [totalElements, setTotalElements] = useState(elements.length)
+  useEffect(() => {
+    setTotalElements(elements.length)
+  }, [elements])
   
   // Change page
+
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber)
   }
   
   // Filter
+
   const filterByName = (str) => {
     setElements(paintings.filter((el) => {
       if (str === '') {
@@ -99,8 +109,33 @@ function Gallery() {
       }
     }))
   }
-
-
+  const filterByLocation = (id) => {
+    setElements(paintings.filter((el) => {
+      if (!id) {
+        return el
+      } else if (id === el.locationId) {
+        return el
+      }
+    }))
+  }
+  const filterFrom = (fromVal) => {
+    setElements(paintings.filter((el) => {
+      if (!fromVal) {
+        return el
+      } else if (el.created > fromVal) {
+        return el
+      }
+    }))
+  }
+  const filterBefore = (beforeVal) => {
+    setElements(paintings.filter((el) => {
+      if (!beforeVal) {
+        return el
+      } else if (el.created < beforeVal) {
+        return el
+      }
+    }))
+  }
 
   return (
     <div className="container">
@@ -108,13 +143,17 @@ function Gallery() {
         filterByName={filterByName}
         authors={authors}
         filterByAuthor={filterByAuthor}
+        locations={locations}
+        filterByLocation={filterByLocation}
+        filterFrom={filterFrom}
+        filterBefore={filterBefore}
       />
       <div className="gallery__card-container">
         {isLoading ? loader : currentElts}
       </div>
       <Pagination_c 
         elementsPerPage={elementsPerPage} 
-        totalElements={paintings.length}
+        totalElements={totalElements}
         paginate={paginate}
       />
 
@@ -126,10 +165,11 @@ function Gallery() {
       <br/>
       <br/>
       <br/>
-      <br/>
-      <br/>
-      <br/>
       <p style={{fontSize: '20px'}}>{JSON.stringify(authors)}</p>
+      <br/>
+      <br/>
+      <br/>
+      <p style={{fontSize: '20px'}}>{JSON.stringify(locations)}</p>
     </div>
   )
 }

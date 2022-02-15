@@ -3,13 +3,14 @@ import {ReactComponent as LeftArrow2} from './arrowLeft2.svg'
 import {ReactComponent as LeftArrow1} from './arrowLeft1.svg'
 import {ReactComponent as RightArrow1} from './arrowRight1.svg'
 import {ReactComponent as RightArrow2} from './arrowRight2.svg'
+import './Pagination.css'
 
 
 function Pagination_c({elementsPerPage, totalElements, paginate}) {
-  const pageNumbers = []
+  const pageNumbers = [1]
   const [currentPage, setCurrentPage] = useState(1)
 
-  for (let i = 1; i < Math.ceil(totalElements / elementsPerPage); i++) {
+  for (let i = 2; i < Math.ceil(totalElements / elementsPerPage); i++) {
     pageNumbers.push(i)
   }
 
@@ -22,7 +23,7 @@ function Pagination_c({elementsPerPage, totalElements, paginate}) {
   }, [currentPage])
 
   const isBeginActive = (currentPage === pageNumbers[0]) ? false : true
-  const isEndActive = (currentPage === pageNumbers[pageNumbers.length - 1]) ? false : true
+  const isEndActive = (pageNumbers.length < 2 || currentPage === pageNumbers[pageNumbers.length - 1]) ? false : true
 
   const classBeginBtns = `pagination__item ${isBeginActive ? 'pagination__item--hoverable' : 'pagination__item--disable'}`
   const classEndBtns = `pagination__item ${isEndActive ? 'pagination__item--hoverable' : 'pagination__item--disable'}`

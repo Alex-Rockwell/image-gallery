@@ -48,7 +48,7 @@
   border-top: 1px solid #bebebe;
   border-radius: 0 0 8px 8px;
   overflow: hidden;
-  padding: 10px 0 0;
+  padding: 10px 0 10px;
   overflow-y: auto;
   z-index: 1000;
   scrollbar-color: #7B7B7B #ffffff;
@@ -75,7 +75,7 @@
 
 .dropdown__option {
   cursor: pointer;
-  padding: 8px 30px;
+  padding: 9px 30px;
   user-select: none;
   transition: .1s ease;
   font-size: 16px;
@@ -87,3 +87,38 @@
   color: #fff;
 }
 
+.dropdown__date {
+  padding: 9px 20px 9px 20px;
+  user-select: none;
+  font-size: 16px;
+  font-weight: 500;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.dropdown__date > *:not(:last-child) {
+  margin-right: 10px;
+}
+
+.dropdown__date-input {
+  width: 95px;
+  height: 45px;
+  border: none;
+  border-radius: 8px;
+  background-color: #efefef;
+  padding: 15px;
+  font-size: 13px;
+  font-weight: 400;
+}
+.dropdown__date-input:focus {
+  border: 1px solid #000;
+  outline: none;
+  background-color: #fff;
+}
+
+.dropdown__date-dash {
+  width: 12px;
+  height: 1px;
+  background-color: #000;
+}

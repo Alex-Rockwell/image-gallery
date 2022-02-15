@@ -1,0 +1,29 @@
+.filters {
+  padding: 30px 0 45px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* 
+.filters > *:not(:last-child) {
+  margin-right: 2rem;
+} 
+*/
+
+.filters__search-input {
+  width: 265px;
+  height: 45px;
+  border: 1px solid #bebebe;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 15px;
+}
+.filters__search-input:focus {
+  border: 1px solid #000;
+  outline: none;
+}
+.filters input::-webkit-input-placeholder {
+  color: #b2b2b2;
+}

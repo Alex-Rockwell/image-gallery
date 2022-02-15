@@ -1,25 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import './Dropdown.css'
-
-const useClickOutside = (ref, handeler) => {
-  useEffect(() => {
-    const outHandeler = (e) => {
-      if (!ref.current.contains(e.target)) {
-        handeler()
-      }
-    }
-    document.addEventListener('mousedown', outHandeler)
-    
-    return () => {
-      document.removeEventListener('mousedown', outHandeler)
-    }
-  }, [ref])
-}
+import useClickOutside from './useClickOutside'
 
 
-
-
-function Dropdown({optionsList, title='Select option', filter}) {
+function Dropdown2({optionsList, title='Select option', filter}) {
   const [isOpen, setIsOpen] = useState(false)
   const [selected, setSelected] = useState(title)
     
@@ -33,7 +17,11 @@ function Dropdown({optionsList, title='Select option', filter}) {
   const options = `dropdown__options ${isOpen ? 'dropdown__options--open' : ''}`
   
   const handleClick = (item) => {
-    setSelected(item.name)
+    let titleText = item.location
+    if (titleText.length >= 33) {
+      titleText = titleText.slice(0, 33) + '...'
+    }
+    setSelected(titleText)
     setIsOpen(false)
     filter(item.id)
   }
@@ -51,11 +39,11 @@ function Dropdown({optionsList, title='Select option', filter}) {
           <div className={arrow}></div>
         </div>
         <div className={options}>
-          {optionsList.map(item => <div className='dropdown__option' onClick={() => handleClick(item)}>{item.name}</div>)}
+          {optionsList.map(item => <div className='dropdown__option' onClick={() => handleClick(item)} key={item.id}>{item.location}</div>)}
         </div>
       </div>
     </div>
   )
 }
 
-export default Dropdown
+export default Dropdown2
