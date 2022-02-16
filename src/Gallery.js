@@ -17,7 +17,8 @@ function Gallery() {
   const [elementsPerPage, setElementsPerPage] = useState(9)
   const [elements, setElements] = useState([...paintings])
 
-  // Loading data
+
+  // Load data
 
   useEffect(() => {
     async function getPaintings() {
@@ -32,8 +33,7 @@ function Gallery() {
     }
     getPaintings()
   }, [])
-  
-  // console.log('Use effect-1 paintings', paintings)
+
 
   // Add authors and locations
 
@@ -59,6 +59,7 @@ function Gallery() {
   
   const loader = <h1>Loading...</h1>
   
+
   // Create elements
 
   useEffect(() => {
@@ -70,7 +71,11 @@ function Gallery() {
     imageUrl={el.imageUrl} 
     cardName={el.name}
     isLoading={isLoading}
+    authorId={el.authorId}
+    locationId={el.locationId}
+    created={el.created}
   />)
+
 
   // Pagination values
 
@@ -89,53 +94,32 @@ function Gallery() {
     setCurrentPage(pageNumber)
   }
   
-  // Filter
+  
+  // Filters
 
-  const filterByName = (str) => {
-    setElements(paintings.filter((el) => {
-      if (str === '') {
-        return el
-      } else if (el.name.toLowerCase().includes(str.toLowerCase())) {
-        return el
-      }
-    }))
-  }
-  const filterByAuthor = (id) => {
-    setElements(paintings.filter((el) => {
-      if (!id) {
-        return el
-      } else if (id === el.authorId) {
-        return el
-      }
-    }))
-  }
-  const filterByLocation = (id) => {
-    setElements(paintings.filter((el) => {
-      if (!id) {
-        return el
-      } else if (id === el.locationId) {
-        return el
-      }
-    }))
-  }
-  const filterFrom = (fromVal) => {
-    setElements(paintings.filter((el) => {
-      if (!fromVal) {
-        return el
-      } else if (el.created > fromVal) {
-        return el
-      }
-    }))
-  }
-  const filterBefore = (beforeVal) => {
-    setElements(paintings.filter((el) => {
-      if (!beforeVal) {
-        return el
-      } else if (el.created < beforeVal) {
-        return el
-      }
-    }))
-  }
+  const [filterName, setFilterName] = useState('')
+  const [filterAuthor, setFilterAuthor] = useState()
+  const [filterLocation, setFilterLocation] = useState()
+  const [filterFromVal, setFilterFromVal] = useState()
+  const [filterBeforeVal, setFilterBeforeVal] = useState()
+
+  const filterByName = (str) => setFilterName(str)
+  const filterByAuthor = (id) => setFilterAuthor(id)
+  const filterByLocation = (id) => setFilterLocation(id)
+  const filterFrom = (fromVal) => setFilterFromVal(fromVal)
+  const filterBefore = (beforeVal) => setFilterBeforeVal(beforeVal)
+
+  let cond1 = (el) => !filterName || el.name.toLowerCase().includes(filterName.toLowerCase())
+  let cond2 = (el) => !filterAuthor || filterAuthor === el.authorId
+  let cond3 = (el) => !filterLocation || filterLocation === el.authorId
+  let cond4 = (el) => !filterFromVal || el.created >= filterFromVal
+  let cond5 = (el) => !filterBeforeVal || el.created <= filterBeforeVal
+  let condArray = [cond1, cond2, cond3, cond4, cond5];
+
+  useEffect(() => {
+    setElements(paintings.filter(el => condArray.every(cond => cond(el) === true)))
+  }, [filterName, filterAuthor, filterLocation, filterFromVal, filterBeforeVal])
+
 
   return (
     <div className="container">
