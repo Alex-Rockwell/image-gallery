@@ -1,12 +1,18 @@
 .filters {
+  max-width: 100%;
   padding: 0 0 45px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 20px;
+  row-gap: 20px;
+}
+@media (max-width: 767px) {
+  .filters {
+    grid-template-columns: 1fr;
+  }
 }
 
 .filters__search-input {
-  width: 265px;
   height: 45px;
   border: 1px solid #bebebe;
   border-radius: 8px;

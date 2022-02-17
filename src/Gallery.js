@@ -18,11 +18,35 @@ function Gallery() {
   const [locations, setLocations] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const [elementsPerPage, setElementsPerPage] = useState(9)
+  const [elementsPerPage, setElementsPerPage] = useState()
   const [elements, setElements] = useState([...paintings])
 
   const darkMode = useThemeContext()
   const toggleTheme = useThemeToggle()
+
+  // Set elements per page
+  useEffect(() => {
+    if (window.innerWidth <= 767) {
+      setElementsPerPage(6)
+    } else if (window.innerWidth <= 1023) {
+      setElementsPerPage(8)
+    } else {
+      setElementsPerPage(9)
+    }
+  }, [])
+  const [width, setWidth] = useState(window.innerWidth)
+  useEffect(() => {
+    window.addEventListener('resize', () => {
+      setWidth(window.innerWidth)
+      if (window.innerWidth <= 767) {
+        setElementsPerPage(6)
+      } else if (window.innerWidth <= 1023) {
+        setElementsPerPage(8)
+      } else {
+        setElementsPerPage(9)
+      } 
+    })
+  }, [])
 
 
   // Load data
