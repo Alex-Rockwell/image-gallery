@@ -3,9 +3,12 @@ import Dropdown1 from './Dropdown1'
 import Dropdown2 from "./Dropdown2"
 import Dropdown3 from "./Dropdown3"
 import './Filters.css'
+import { useThemeContext } from "./ThemeProvider"
 
 
-function Filters({filterByName, authors, filterByAuthor, locations, filterByLocation, filterFrom, filterBefore}) {
+function Filters(props) {
+  const {filterByName, authors, filterByAuthor, locations, filterByLocation, filterFrom, filterBefore} = props
+  const darkMode = useThemeContext()
   const [searchName, setSearchName] = useState('')
   const handleSearchName = (e) => {
     setSearchName(e.target.value)
@@ -16,7 +19,7 @@ function Filters({filterByName, authors, filterByAuthor, locations, filterByLoca
     <div className="filters">
 
       <input 
-        className="filters__search-input" 
+        className={`filters__search-input ${darkMode ? 'filters__search-input--dm' : ''}`} 
         type='text' 
         placeholder="Name" 
         onChange={handleSearchName}

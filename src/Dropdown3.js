@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import './Dropdown.css'
+import { useThemeContext } from './ThemeProvider'
 import useClickOutside from './useClickOutside'
 
 
@@ -8,15 +9,24 @@ function Dropdown3({title='Select option', filterFrom, filterBefore}) {
   const [selected, setSelected] = useState(title)
   const [fromVal, setFromVal] = useState('')
   const [beforeVal, setBeforeVal] = useState('')
+  const darkMode = useThemeContext()
     
   const dropdownRef = useRef()
   useClickOutside(dropdownRef, () => {
     setIsOpen(false)
   })
   
-  const selectedVal = `dropdown__selected-val ${isOpen ? 'dropdown__selected-val--open' : ''}`
-  const arrow = `dropdown__arrow ${isOpen ? 'dropdown__arrow--open' : ''}`
-  const options = `dropdown__options ${isOpen ? 'dropdown__options--open' : ''}`
+  const selectedVal = `dropdown__selected-val 
+    ${isOpen ? 'dropdown__selected-val--open' : ''} 
+    ${isOpen && darkMode ? 'dropdown__selected-val--opendm' : ''} 
+    ${darkMode ? 'dropdown__selected-val--dm' : ''}`
+  const arrow = `dropdown__arrow 
+    ${isOpen ? 'dropdown__arrow--open' : ''}`
+  const options = `dropdown__options 
+    ${isOpen ? 'dropdown__options--open' : ''} 
+    ${darkMode ? 'dropdown__options--dm' : ''} 
+    dropdown__options--date`
+  const dateInput = `dropdown__date-input ${darkMode ? 'dropdown__date-input--dm' : ''}`
   
 
   const handleInputFrom = (e) => {
@@ -44,7 +54,7 @@ function Dropdown3({title='Select option', filterFrom, filterBefore}) {
           <div className='dropdown__date'>
             <input 
               type={'text'}
-              className='dropdown__date-input' 
+              className={dateInput} 
               placeholder='from'
               value={fromVal}
               onChange={handleInputFrom}
@@ -52,7 +62,7 @@ function Dropdown3({title='Select option', filterFrom, filterBefore}) {
             <div className='dropdown__date-dash'></div>
             <input 
               type={'text'}
-              className='dropdown__date-input' 
+              className={dateInput} 
               placeholder='before'
               value={beforeVal}
               onChange={handleInputBefore}

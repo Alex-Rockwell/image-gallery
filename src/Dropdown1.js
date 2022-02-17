@@ -1,20 +1,30 @@
 import { useRef, useState } from 'react'
 import './Dropdown.css'
+import { useThemeContext } from './ThemeProvider'
 import useClickOutside from './useClickOutside'
 
 
 function Dropdown1({optionsList, title='Select option', filter}) {
   const [isOpen, setIsOpen] = useState(false)
   const [selected, setSelected] = useState(title)
+  const darkMode = useThemeContext()
     
   const dropdownRef = useRef()
   useClickOutside(dropdownRef, () => {
     setIsOpen(false)
   })
   
-  const selectedVal = `dropdown__selected-val ${isOpen ? 'dropdown__selected-val--open' : ''}`
-  const arrow = `dropdown__arrow ${isOpen ? 'dropdown__arrow--open' : ''}`
-  const options = `dropdown__options ${isOpen ? 'dropdown__options--open' : ''}`
+  const selectedVal = `dropdown__selected-val 
+    ${isOpen ? 'dropdown__selected-val--open' : ''} 
+    ${isOpen && darkMode ? 'dropdown__selected-val--opendm' : ''} 
+    ${darkMode ? 'dropdown__selected-val--dm' : ''}`
+  const arrow = `dropdown__arrow 
+    ${isOpen ? 'dropdown__arrow--open' : ''}`
+  const options = `dropdown__options 
+    ${isOpen ? 'dropdown__options--open' : ''} 
+    ${darkMode ? 'dropdown__options--dm' : ''}`
+  const option = `dropdown__option 
+    ${darkMode ? 'dropdown__option--dm' : ''}`
   
   const handleClick = (item) => {
     setSelected(item.name)
@@ -35,7 +45,7 @@ function Dropdown1({optionsList, title='Select option', filter}) {
           <div className={arrow}></div>
         </div>
         <div className={options}>
-          {optionsList.map(item => <div className='dropdown__option' onClick={() => handleClick(item)} key={item.id}>{item.name}</div>)}
+          {optionsList.map(item => <div className={option} onClick={() => handleClick(item)} key={item.id}>{item.name}</div>)}
         </div>
       </div>
     </div>
