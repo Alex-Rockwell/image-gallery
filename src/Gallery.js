@@ -17,42 +17,41 @@ function Gallery() {
   const [authors, setAuthors] = useState([])
   const [locations, setLocations] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [elementsPerPage, setElementsPerPage] = useState()
-  const [elements, setElements] = useState([...paintings])
+  const [elements, setElements] = useState([])
+  const [isFiltersNotEmpty, setIsFiltersNotEmpty] = useState(false)
 
   const darkMode = useThemeContext()
   const toggleTheme = useThemeToggle()
 
   // Set elements per page
-  useEffect(() => {
-    if (window.innerWidth <= 767) {
-      setElementsPerPage(6)
-    } else if (window.innerWidth <= 1023) {
-      setElementsPerPage(8)
-    } else {
-      setElementsPerPage(9)
+  
+  function getElementsPerPage(width) {
+    if (width <= 767) {
+      return 6
+    } else if (width <= 1023) {
+      return 8
+    } else if (width >= 1024) {
+      return 9
     }
-  }, [])
+  }
+
   const [width, setWidth] = useState(window.innerWidth)
+
   useEffect(() => {
     window.addEventListener('resize', () => {
-      setWidth(window.innerWidth)
-      if (window.innerWidth <= 767) {
-        setElementsPerPage(6)
-      } else if (window.innerWidth <= 1023) {
-        setElementsPerPage(8)
-      } else {
-        setElementsPerPage(9)
-      } 
+      setWidth(window.innerWidth) 
     })
   }, [])
+
+  useEffect(() => {
+    setElementsPerPage(getElementsPerPage(width))
+  }, [width])
 
 
   // Load data
 
   useEffect(() => {
-    async function getPaintings() {
+    async function getData() {
       setIsLoading(true)
       const res1 = await axios.get(`https://test-front.framework.team/paintings`)
       const res2 = await axios.get(`https://test-front.framework.team/authors`)
@@ -62,69 +61,89 @@ function Gallery() {
       setLocations(res3.data)
       setIsLoading(false)
     }
-    getPaintings()
+    getData()
   }, [])
-
-
-  // Add authors and locations to painting objects
-
-  useEffect(() => {
-    setPaintings((prev) => {
-      const newarr = prev.map(p => {
-        let val = authors.find(a => a.id === p.authorId)
-        return {...p, authorName: val.name}
-      })
-      return newarr
-    })
-  }, [authors])
-  useEffect(() => {
-    setPaintings((prev) => {
-      const newarr = prev.map(p => {
-        let val2 = locations.find(l => l.id === p.locationId)
-        return {...p, locationName: val2.location}
-      })
-      return newarr
-    })
-  }, [locations])
-
-  
+ 
   const loader = <h1>Loading...</h1>
   
-
-  // Create elements
-
-  useEffect(() => {
-    setElements(paintings)
-  }, [paintings, authors, locations])
-        
-  const paintingsEls = elements.map(el => <Card 
-    key={uuidv4()} 
-    imageUrl={el.imageUrl} 
-    cardName={el.name}
-    authorName={el.authorName}
-    locationName={el.locationName}
-    created={el.created}
-    />)
-
   // Pagination values
 
-  const indexOfLastElt = currentPage * elementsPerPage
-  const indexOfFirstElt = indexOfLastElt - elementsPerPage
-  const currentElts = paintingsEls.slice(indexOfFirstElt, indexOfLastElt)
-
-  const [totalElements, setTotalElements] = useState(elements.length)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [elementsPerPage, setElementsPerPage] = useState(() => {
+    return getElementsPerPage(window.innerWidth)
+  })
+  const [totalElements, setTotalElements] = useState(paintings.length)
   useEffect(() => {
-    setTotalElements(elements.length)
-  }, [elements])
+    if (!isFiltersNotEmpty) {
+      setTotalElements(paintings.length)
+    } else {
+      setTotalElements(elements.length)
+    }
+  }, [paintings, isFiltersNotEmpty])
   
   // Change page
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber)
   }
-  
-  
-  // Filters
+
+  // Load elements
+ 
+  const initUrl = `https://test-front.framework.team/paintings`
+
+  useEffect(() => {
+    async function displayElements() {
+      setIsLoading(true)
+      
+      let currentUrl = initUrl + `?_page=${currentPage}&_limit=${elementsPerPage}`
+      const res = await axios.get(currentUrl)
+      setElements(res.data)
+      const res2 = await axios.get(`https://test-front.framework.team/authors`)
+      const res3 = await axios.get(`https://test-front.framework.team/locations`)
+      setAuthors(res2.data)
+      setLocations(res3.data)
+
+      setIsLoading(false)
+    }
+    displayElements()
+  }, [currentPage, elementsPerPage])
+
+  // Add authors and locations
+
+  useEffect(() => {
+    setElements((prev) => {
+      const newarr = prev.map(p => {
+        let val = authors.find(a => a.id === p.authorId)
+        return {...p, authorName: val.name}
+      })
+      return newarr
+    })
+  }, [authors, currentPage])
+
+  useEffect(() => {
+    setElements((prev) => {
+      const newarr = prev.map(p => {
+        let val2 = locations.find(l => l.id === p.locationId)
+        return {...p, locationName: val2.location}
+      })
+      return newarr
+    })
+  }, [locations, currentPage])
+
+  // Create elements
+        
+  const paintingsEls = elements.map(el => {
+    return <Card 
+    key={uuidv4()} 
+    imageUrl={el.imageUrl} 
+    cardName={el.name}
+    authorName={el.authorName}
+    locationName={el.locationName}
+    created={el.created}
+    />
+  })
+
+  //Filters2
 
   const [filterName, setFilterName] = useState('')
   const [filterAuthor, setFilterAuthor] = useState()
@@ -138,16 +157,41 @@ function Gallery() {
   const filterFrom = (fromVal) => setFilterFromVal(fromVal)
   const filterBefore = (beforeVal) => setFilterBeforeVal(beforeVal)
 
-  let cond1 = (el) => !filterName || el.name.toLowerCase().includes(filterName.toLowerCase())
-  let cond2 = (el) => !filterAuthor || filterAuthor === el.authorId
-  let cond3 = (el) => !filterLocation || filterLocation === el.locationId
-  let cond4 = (el) => !filterFromVal || el.created >= filterFromVal
-  let cond5 = (el) => !filterBeforeVal || el.created <= filterBeforeVal
-  let condArray = [cond1, cond2, cond3, cond4, cond5];
-
   useEffect(() => {
-    setElements(paintings.filter(el => condArray.every(cond => cond(el) === true)))
+    async function displayFiltered() {
+      setIsLoading(true)
+      
+      
+      let urlString = !filterName ? '' : `&q=${filterName}`
+      let urlAuthor = !filterAuthor ? '' : `&authorId=${filterAuthor}`
+      let urlLocation = !filterLocation ? '' : `&locationId=${filterLocation}`
+      let urlFrom = !filterFromVal ? '' : `&created_gte=${filterFromVal}`
+      let urlBefore = !filterBeforeVal ? '' : `&created_lte=${filterBeforeVal}`    
+      let filtersArray = [urlString, urlAuthor, urlLocation, urlFrom, urlBefore]
+           
+      let firstString = initUrl + `?_page=${1}&_limit=${elementsPerPage}`
+      let finalString = firstString + filtersArray.join('')
+      
+      const res = await axios.get(finalString)
+      setElements(res.data)
+      const res2 = await axios.get(`https://test-front.framework.team/authors`)
+      const res3 = await axios.get(`https://test-front.framework.team/locations`)
+      setAuthors(res2.data)
+      setLocations(res3.data)
+
+
+      if (filtersArray.some(el => el.length > 0)) {
+        setIsFiltersNotEmpty(true)
+      } else {
+        setIsFiltersNotEmpty(false)
+      }
+
+      setIsLoading(false)
+    }
+    displayFiltered()
   }, [filterName, filterAuthor, filterLocation, filterFromVal, filterBeforeVal])
+
+
 
 
   return (
@@ -170,65 +214,13 @@ function Gallery() {
           filterBefore={filterBefore}
         />
         <div className="gallery__card-container">
-          {isLoading ? loader : currentElts}
+          {isLoading ? loader : paintingsEls}
         </div>
         <Pagination_c 
           elementsPerPage={elementsPerPage} 
           totalElements={totalElements}
           paginate={paginate}
         />
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
       </div>
     </div>
   )

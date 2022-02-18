@@ -57,22 +57,28 @@
 }
 @media (max-width: 350px) {
   .card__info {
-    bottom: -36%;
+    bottom: -39%;
+    height: 55%;
   }
 }
 
 .card:hover .card__info {
   transform: translateY(-72%);
 }
+@media (max-width: 350px) {
+  .card:hover .card__info {
+    transform: translateY(-71%);
+  }
+}
 
 .card__name {
-  height: 30px;
+  height: auto;
   margin: 0;
   font-family: Roboto;
   font-size: 18px;
   font-weight: 700;
-  line-height: 20px;
-  padding: 5px 0;
+  line-height: 25px;
+  padding: 5px 0 0;
 }
 
 .card__heading3 {

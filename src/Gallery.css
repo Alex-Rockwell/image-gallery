@@ -2,7 +2,7 @@
   background-color: #000;
 }
 .gallery {
-  padding: 0 42px;
+  padding: 0 42px 200px;
 }
 @media screen and (max-width: 1023px) {
   .gallery {
@@ -43,7 +43,7 @@
 
 @media (max-width: 1023px) {
   .gallery__card-container {
-    grid-template-columns: repeat(2, auto);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 @media (max-width: 767px) {

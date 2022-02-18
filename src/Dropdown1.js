@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './Dropdown.css'
 import { useThemeContext } from './ThemeProvider'
 import useClickOutside from './useClickOutside'
@@ -31,6 +31,7 @@ function Dropdown1({optionsList, title='Select option', filter}) {
     setIsOpen(false)
     filter(item.id)
   }
+
 
   return (
     <div>

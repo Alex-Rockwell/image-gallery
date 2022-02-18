@@ -12,7 +12,7 @@ function Pagination_c({elementsPerPage, totalElements, paginate}) {
   const [currentPage, setCurrentPage] = useState(1)
   const darkMode = useThemeContext()
 
-  for (let i = 2; i < Math.ceil(totalElements / elementsPerPage); i++) {
+  for (let i = 2; i <= Math.ceil(totalElements / elementsPerPage); i++) {
     pageNumbers.push(i)
   }
 
