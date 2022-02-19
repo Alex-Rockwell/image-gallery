@@ -8,6 +8,7 @@ import {ReactComponent as Logo} from './logo.svg'
 import {ReactComponent as DarkModeIcon} from './darkModeIcon.svg'
 import './Gallery.css'
 import { useThemeContext, useThemeToggle } from "./ThemeProvider";
+const initUrl = `https://test-front.framework.team/paintings`
 
 
 
@@ -18,7 +19,6 @@ function Gallery() {
   const [locations, setLocations] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [elements, setElements] = useState([])
-  const [isFiltersNotEmpty, setIsFiltersNotEmpty] = useState(false)
 
   const darkMode = useThemeContext()
   const toggleTheme = useThemeToggle()
@@ -37,23 +37,50 @@ function Gallery() {
 
   const [width, setWidth] = useState(window.innerWidth)
 
+  const changeWidth = () => {
+    setWidth(window.innerWidth) 
+  }
   useEffect(() => {
-    window.addEventListener('resize', () => {
-      setWidth(window.innerWidth) 
-    })
+    window.addEventListener('resize', changeWidth)
+    return () => {
+      window.removeEventListener('resize', changeWidth)
+    } 
   }, [])
 
   useEffect(() => {
     setElementsPerPage(getElementsPerPage(width))
   }, [width])
 
+  //Filters2
+
+  const [filterName, setFilterName] = useState('')
+  const [filterAuthor, setFilterAuthor] = useState()
+  const [filterLocation, setFilterLocation] = useState()
+  const [filterFromVal, setFilterFromVal] = useState()
+  const [filterBeforeVal, setFilterBeforeVal] = useState()
+
+  const filterByName = (str) => setFilterName(str)
+  const filterByAuthor = (id) => setFilterAuthor(id)
+  const filterByLocation = (id) => setFilterLocation(id)
+  const filterFrom = (fromVal) => setFilterFromVal(fromVal)
+  const filterBefore = (beforeVal) => setFilterBeforeVal(beforeVal)
 
   // Load data
 
   useEffect(() => {
     async function getData() {
       setIsLoading(true)
-      const res1 = await axios.get(`https://test-front.framework.team/paintings`)
+
+      let urlString = !filterName ? '' : `&q=${filterName}`
+      let urlAuthor = !filterAuthor ? '' : `&authorId=${filterAuthor}`
+      let urlLocation = !filterLocation ? '' : `&locationId=${filterLocation}`
+      let urlFrom = !filterFromVal ? '' : `&created_gte=${filterFromVal}`
+      let urlBefore = !filterBeforeVal ? '' : `&created_lte=${filterBeforeVal}`    
+      let filtersArray = [urlString, urlAuthor, urlLocation, urlFrom, urlBefore]
+           
+      let string = `${initUrl}?${filtersArray.join('')}`
+
+      const res1 = await axios.get(string)
       const res2 = await axios.get(`https://test-front.framework.team/authors`)
       const res3 = await axios.get(`https://test-front.framework.team/locations`)
       setPaintings(res1.data)
@@ -62,10 +89,10 @@ function Gallery() {
       setIsLoading(false)
     }
     getData()
-  }, [])
+  }, [filterName, filterAuthor, filterLocation, filterFromVal, filterBeforeVal])
  
   const loader = <h1>Loading...</h1>
-  
+
   // Pagination values
 
   const [currentPage, setCurrentPage] = useState(1)
@@ -73,30 +100,34 @@ function Gallery() {
     return getElementsPerPage(window.innerWidth)
   })
   const [totalElements, setTotalElements] = useState(paintings.length)
+
   useEffect(() => {
-    if (!isFiltersNotEmpty) {
-      setTotalElements(paintings.length)
-    } else {
-      setTotalElements(elements.length)
-    }
-  }, [paintings, isFiltersNotEmpty])
+    setTotalElements(paintings.length)
+  }, [paintings])
   
   // Change page
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber)
   }
-
+  
   // Load elements
  
-  const initUrl = `https://test-front.framework.team/paintings`
-
   useEffect(() => {
     async function displayElements() {
       setIsLoading(true)
+
+      let urlString = !filterName ? '' : `&q=${filterName}`
+      let urlAuthor = !filterAuthor ? '' : `&authorId=${filterAuthor}`
+      let urlLocation = !filterLocation ? '' : `&locationId=${filterLocation}`
+      let urlFrom = !filterFromVal ? '' : `&created_gte=${filterFromVal}`
+      let urlBefore = !filterBeforeVal ? '' : `&created_lte=${filterBeforeVal}`    
+      let filtersArray = [urlString, urlAuthor, urlLocation, urlFrom, urlBefore]
+           
+      let firstString = initUrl + `?_page=${currentPage}&_limit=${elementsPerPage}`
+      let finalString = firstString + filtersArray.join('')
       
-      let currentUrl = initUrl + `?_page=${currentPage}&_limit=${elementsPerPage}`
-      const res = await axios.get(currentUrl)
+      const res = await axios.get(finalString)
       setElements(res.data)
       const res2 = await axios.get(`https://test-front.framework.team/authors`)
       const res3 = await axios.get(`https://test-front.framework.team/locations`)
@@ -106,7 +137,9 @@ function Gallery() {
       setIsLoading(false)
     }
     displayElements()
-  }, [currentPage, elementsPerPage])
+  }, [currentPage, elementsPerPage, filterName, filterAuthor, filterLocation, filterFromVal, filterBeforeVal])
+
+
 
   // Add authors and locations
 
@@ -142,55 +175,6 @@ function Gallery() {
     created={el.created}
     />
   })
-
-  //Filters2
-
-  const [filterName, setFilterName] = useState('')
-  const [filterAuthor, setFilterAuthor] = useState()
-  const [filterLocation, setFilterLocation] = useState()
-  const [filterFromVal, setFilterFromVal] = useState()
-  const [filterBeforeVal, setFilterBeforeVal] = useState()
-
-  const filterByName = (str) => setFilterName(str)
-  const filterByAuthor = (id) => setFilterAuthor(id)
-  const filterByLocation = (id) => setFilterLocation(id)
-  const filterFrom = (fromVal) => setFilterFromVal(fromVal)
-  const filterBefore = (beforeVal) => setFilterBeforeVal(beforeVal)
-
-  useEffect(() => {
-    async function displayFiltered() {
-      setIsLoading(true)
-      
-      
-      let urlString = !filterName ? '' : `&q=${filterName}`
-      let urlAuthor = !filterAuthor ? '' : `&authorId=${filterAuthor}`
-      let urlLocation = !filterLocation ? '' : `&locationId=${filterLocation}`
-      let urlFrom = !filterFromVal ? '' : `&created_gte=${filterFromVal}`
-      let urlBefore = !filterBeforeVal ? '' : `&created_lte=${filterBeforeVal}`    
-      let filtersArray = [urlString, urlAuthor, urlLocation, urlFrom, urlBefore]
-           
-      let firstString = initUrl + `?_page=${1}&_limit=${elementsPerPage}`
-      let finalString = firstString + filtersArray.join('')
-      
-      const res = await axios.get(finalString)
-      setElements(res.data)
-      const res2 = await axios.get(`https://test-front.framework.team/authors`)
-      const res3 = await axios.get(`https://test-front.framework.team/locations`)
-      setAuthors(res2.data)
-      setLocations(res3.data)
-
-
-      if (filtersArray.some(el => el.length > 0)) {
-        setIsFiltersNotEmpty(true)
-      } else {
-        setIsFiltersNotEmpty(false)
-      }
-
-      setIsLoading(false)
-    }
-    displayFiltered()
-  }, [filterName, filterAuthor, filterLocation, filterFromVal, filterBeforeVal])
-
 
 
 
