@@ -4,13 +4,11 @@ import { v4 as uuidv4 } from 'uuid';
 import Card from "./Card"
 import Filters from "./Filters";
 import Pagination_c from "./Pagination_c";
-import {ReactComponent as Logo} from './logo.svg'
-import {ReactComponent as DarkModeIcon} from './darkModeIcon.svg'
+import {ReactComponent as Logo} from './svg/logo.svg'
+import {ReactComponent as DarkModeIcon} from './svg/darkModeIcon.svg'
 import './Gallery.css'
 import { useThemeContext, useThemeToggle } from "./ThemeProvider";
 const initUrl = `https://test-front.framework.team/paintings`
-
-
 
 
 function Gallery() {
@@ -138,8 +136,6 @@ function Gallery() {
     }
     displayElements()
   }, [currentPage, elementsPerPage, filterName, filterAuthor, filterLocation, filterFromVal, filterBeforeVal])
-
-
 
   // Add authors and locations
 

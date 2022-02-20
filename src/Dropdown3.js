@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import './Dropdown.css'
 import { useThemeContext } from './ThemeProvider'
-import useClickOutside from './useClickOutside'
+import useClickOutside from './hooks/useClickOutside'
 
 
 function Dropdown3({title='Select option', filterFrom, filterBefore}) {

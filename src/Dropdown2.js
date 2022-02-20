@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import './Dropdown.css'
 import { useThemeContext } from './ThemeProvider'
-import useClickOutside from './useClickOutside'
+import useClickOutside from './hooks/useClickOutside'
 
 
 function Dropdown2({optionsList, title='Select option', filter}) {
@@ -36,6 +36,33 @@ function Dropdown2({optionsList, title='Select option', filter}) {
     filter(item.id)
   }
 
+  let optionsShort = []
+  if (window.innerWidth > 1023) {
+    optionsShort = optionsList.map(el => {
+      if (el.location.length > 16) {
+        el.location = el.location.slice(0, 16) + '...'
+        return el
+      }
+      return el
+    })
+  } else if (window.innerWidth > 767 && window.innerWidth <= 1023) {
+    optionsShort = optionsList.map(el => {
+      if (el.location.length > 10) {
+        el.location = el.location.slice(0, 10) + '...'
+        return el
+      }
+      return el
+    }) 
+  } else {
+    optionsShort = optionsList.map(el => {
+      if (el.location.length > 22) {
+        el.location = el.location.slice(0, 22) + '...'
+        return el
+      }
+      return el
+    }) 
+  }
+
   return (
     <div>
       <div ref={dropdownRef} className="dropdown">
@@ -48,12 +75,14 @@ function Dropdown2({optionsList, title='Select option', filter}) {
           <div className={selectedVal}>{selected}</div>
           <div className={arrow}></div>
         </div>
+
         <div className={options}>
-          {optionsList.map(item => <div 
+          {optionsShort.map(item => <div 
             className={option} 
             onClick={() => handleClick(item)} 
             key={item.id}>{item.location}</div>)}
         </div>
+
       </div>
     </div>
   )

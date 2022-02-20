@@ -95,7 +95,7 @@
 
 .dropdown__option {
   cursor: pointer;
-  padding: 9px 30px;
+  padding: 10px 22px;
   user-select: none;
   transition: .1s ease;
   font-size: 16px;
@@ -104,12 +104,12 @@
 
 @media screen and (max-width: 1023px) {
   .dropdown__option {
-    cursor: pointer;
-    padding: 9px 15px;
-    user-select: none;
-    transition: .1s ease;
-    font-size: 16px;
-    font-weight: 500;
+    padding: 10px 15px;
+  }
+}
+@media screen and (max-width: 767px) {
+  .dropdown__option {
+    padding: 10px 30px;
   }
 }
 
@@ -136,6 +136,25 @@
   margin-right: 10px;
 }
 
+@media (max-width: 1023px) {
+  .dropdown__date {
+    flex-direction: column;
+  }
+  .dropdown__date > *:not(:last-child) {
+    margin-bottom: 10px;
+    margin-right: 0;
+  }
+}
+@media (max-width: 767px) {
+  .dropdown__date {
+    flex-direction: row;
+  }
+  .dropdown__date > *:not(:last-child) {
+    margin-bottom: 0;
+    margin-right: 10px;
+  }
+}
+
 .dropdown__date-input {
   width: 95px;
   height: 45px;
@@ -146,6 +165,13 @@
   font-size: 13px;
   font-weight: 400;
 }
+
+@media (max-width: 767px) {
+  .dropdown__date-input {
+    width: 40%;
+  }
+}
+
 .dropdown__date-input:focus {
   border: 1px solid #000;
   outline: none;

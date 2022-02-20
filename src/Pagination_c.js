@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
-import {ReactComponent as LeftArrow2} from './arrowLeft2.svg'
-import {ReactComponent as LeftArrow1} from './arrowLeft1.svg'
-import {ReactComponent as RightArrow1} from './arrowRight1.svg'
-import {ReactComponent as RightArrow2} from './arrowRight2.svg'
+import {ReactComponent as LeftArrow2} from './svg/arrowLeft2.svg'
+import {ReactComponent as LeftArrow1} from './svg/arrowLeft1.svg'
+import {ReactComponent as RightArrow1} from './svg/arrowRight1.svg'
+import {ReactComponent as RightArrow2} from './svg/arrowRight2.svg'
 import './Pagination.css'
 import { useThemeContext } from "./ThemeProvider"
 
