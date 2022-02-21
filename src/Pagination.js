@@ -59,6 +59,31 @@ function Pagination(props) {
     `
   }
 
+  let slicedNumbers = JSON.parse(JSON.stringify(pageNumbers))
+
+  if (window.innerWidth <= 767) {
+    if (!isBeginActive) {
+      slicedNumbers.length = 3
+    }
+    if (!isEndActive) {
+      slicedNumbers = slicedNumbers.slice(slicedNumbers.length - 3, slicedNumbers.length)
+    }
+    if (isBeginActive && isEndActive) {
+      slicedNumbers = slicedNumbers.slice(currentPage - 2, currentPage + 1)
+    }
+  }
+      
+  let pages = slicedNumbers.map(number => {
+    return (
+        <li 
+          key={number} 
+          className={page(number)}
+          onClick={() => handlePageNumber(number)}
+        >
+            {number}
+        </li>
+    )
+  })
 
   return (
     <div>
@@ -70,17 +95,7 @@ function Pagination(props) {
           <li onClick={() => setCurrentPage(prev => prev - 1)} className={beginBtns}>
             <LeftArrow1 />
           </li>
-          {pageNumbers.map(number => {
-            return (
-                <li 
-                  key={number} 
-                  className={page(number)}
-                  onClick={() => handlePageNumber(number)}
-                >
-                    {number}
-                </li>
-            )
-          })}
+            {pages}
           <li onClick={() => setCurrentPage(prev => prev + 1)} className={endBtns}>
             <RightArrow1 />
           </li>
