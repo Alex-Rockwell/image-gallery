@@ -66,11 +66,11 @@ function Gallery() {
   const [filtersState, setFiltersState] = useState([])
 
   useEffect(() => {
-    let urlString = !filterName ? '' : `&q=${filterName}`
-    let urlAuthor = !filterAuthor ? '' : `&authorId=${filterAuthor}`
-    let urlLocation = !filterLocation ? '' : `&locationId=${filterLocation}`
-    let urlFrom = !filterFromVal ? '' : `&created_gte=${filterFromVal}`
-    let urlBefore = !filterBeforeVal ? '' : `&created_lte=${filterBeforeVal}` 
+    const urlString = !filterName ? '' : `&q=${filterName}`
+    const urlAuthor = !filterAuthor ? '' : `&authorId=${filterAuthor}`
+    const urlLocation = !filterLocation ? '' : `&locationId=${filterLocation}`
+    const urlFrom = !filterFromVal ? '' : `&created_gte=${filterFromVal}`
+    const urlBefore = !filterBeforeVal ? '' : `&created_lte=${filterBeforeVal}` 
     
     setFiltersState([urlString, urlAuthor, urlLocation, urlFrom, urlBefore])
 
@@ -99,7 +99,7 @@ function Gallery() {
   useEffect(() => {
     setElements((prev) => {
       const newarr = prev.map(p => {
-        let val = authors.find(a => a.id === p.authorId)
+        const val = authors.find(a => a.id === p.authorId)
         return {...p, authorName: val.name}
       })
       return newarr
@@ -109,7 +109,7 @@ function Gallery() {
   useEffect(() => {
     setElements((prev) => {
       const newarr = prev.map(p => {
-        let val2 = locations.find(l => l.id === p.locationId)
+        const val2 = locations.find(l => l.id === p.locationId)
         return {...p, locationName: val2.location}
       })
       return newarr
@@ -122,13 +122,13 @@ function Gallery() {
     async function getData() {
       setIsLoading(true)
       
-      let string = `${initUrl}?${filtersState.join('')}`
+      const string = `${initUrl}?${filtersState.join('')}`
       
       const res1 = await axios.get(string)
       setPaintings(res1.data)
       
-      let firstString = initUrl + `?_page=${currentPage}&_limit=${elementsPerPage}`
-      let finalString = firstString + filtersState.join('')
+      const firstString = initUrl + `?_page=${currentPage}&_limit=${elementsPerPage}`
+      const finalString = firstString + filtersState.join('')
       
       const res2 = await axios.get(finalString)
       setElements(res2.data)

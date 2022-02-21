@@ -36,9 +36,17 @@ function Dropdown2({optionsList, title='Select option', filter}) {
     filter(item.id)
   }
 
-  let optionsShort = []
-  if (window.innerWidth > 1023) {
-    optionsShort = optionsList.map(el => {
+  const optionsShort = JSON.parse(JSON.stringify(optionsList))
+  if (window.innerWidth > 1279) {
+    optionsShort.map(el => {
+      if (el.location.length > 24) {
+        el.location = el.location.slice(0, 24) + '...'
+        return el
+      }
+      return el
+    })
+  } else if (window.innerWidth > 1023 && window.innerWidth <=1279) {
+    optionsShort.map(el => {
       if (el.location.length > 16) {
         el.location = el.location.slice(0, 16) + '...'
         return el
@@ -46,7 +54,7 @@ function Dropdown2({optionsList, title='Select option', filter}) {
       return el
     })
   } else if (window.innerWidth > 767 && window.innerWidth <= 1023) {
-    optionsShort = optionsList.map(el => {
+    optionsShort.map(el => {
       if (el.location.length > 10) {
         el.location = el.location.slice(0, 10) + '...'
         return el
@@ -54,7 +62,7 @@ function Dropdown2({optionsList, title='Select option', filter}) {
       return el
     }) 
   } else {
-    optionsShort = optionsList.map(el => {
+    optionsShort.map(el => {
       if (el.location.length > 22) {
         el.location = el.location.slice(0, 22) + '...'
         return el

@@ -50,6 +50,15 @@ function Pagination(props) {
   
   const pagination = `pagination ${darkMode ? 'pagination--dm' : ''}`
 
+  const page = (number) => {
+    return `pagination__item 
+    ${(number === currentPage) ? 'pagination__item--active' : 'pagination__item--hoverable'} 
+    ${darkMode ? 'pagination__item--dm' : ''} 
+    ${number === currentPage && darkMode ? 'pagination__item--activedm' : ''} 
+    ${!(number === currentPage) && darkMode ? 'pagination__item--hoverabledm' : ''} 
+    `
+  }
+
 
   return (
     <div>
@@ -65,12 +74,7 @@ function Pagination(props) {
             return (
                 <li 
                   key={number} 
-                  className={`pagination__item 
-                    ${(number === currentPage) ? 'pagination__item--active' : 'pagination__item--hoverable'} 
-                    ${darkMode ? 'pagination__item--dm' : ''} 
-                    ${number === currentPage && darkMode ? 'pagination__item--activedm' : ''} 
-                    ${!(number === currentPage) && darkMode ? 'pagination__item--hoverabledm' : ''} 
-                    `}
+                  className={page(number)}
                   onClick={() => handlePageNumber(number)}
                 >
                     {number}
