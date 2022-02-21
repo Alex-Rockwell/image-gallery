@@ -7,22 +7,31 @@ import './Pagination.css'
 import { useThemeContext } from "./ThemeProvider"
 
 
-function Pagination_c({elementsPerPage, totalElements, paginate}) {
+function Pagination(props) {
+  const {elementsPerPage, totalElements, paginate, filtersState} = props
   const pageNumbers = [1]
   const [currentPage, setCurrentPage] = useState(1)
   const darkMode = useThemeContext()
-
+  
   for (let i = 2; i <= Math.ceil(totalElements / elementsPerPage); i++) {
     pageNumbers.push(i)
   }
-
+  
   const handlePageNumber = (number) => {
     setCurrentPage(number)
   }
   
   useEffect(() => {
     paginate(currentPage)
-  }, [currentPage])
+  }, [currentPage, paginate])
+
+  // Reset page if filters is active
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [filtersState])
+
+  // Class names
 
   const isBeginActive = (currentPage === pageNumbers[0]) ? false : true
   const isEndActive = (pageNumbers.length < 2 || currentPage === pageNumbers[pageNumbers.length - 1]) ? false : true
@@ -80,4 +89,4 @@ function Pagination_c({elementsPerPage, totalElements, paginate}) {
   )
 }
 
-export default Pagination_c
+export default Pagination

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { v4 as uuidv4 } from 'uuid';
 import Card from "./Card"
 import Filters from "./Filters";
-import Pagination_c from "./Pagination_c";
+import Pagination from "./Pagination";
 import {ReactComponent as Logo} from './svg/logo.svg'
 import {ReactComponent as DarkModeIcon} from './svg/darkModeIcon.svg'
 import './Gallery.css'
@@ -49,13 +49,13 @@ function Gallery() {
     setElementsPerPage(getElementsPerPage(width))
   }, [width])
 
-  //Filters2
+  // Filters
 
   const [filterName, setFilterName] = useState('')
-  const [filterAuthor, setFilterAuthor] = useState()
-  const [filterLocation, setFilterLocation] = useState()
-  const [filterFromVal, setFilterFromVal] = useState()
-  const [filterBeforeVal, setFilterBeforeVal] = useState()
+  const [filterAuthor, setFilterAuthor] = useState('')
+  const [filterLocation, setFilterLocation] = useState('')
+  const [filterFromVal, setFilterFromVal] = useState('')
+  const [filterBeforeVal, setFilterBeforeVal] = useState('')
 
   const filterByName = (str) => setFilterName(str)
   const filterByAuthor = (id) => setFilterAuthor(id)
@@ -63,33 +63,18 @@ function Gallery() {
   const filterFrom = (fromVal) => setFilterFromVal(fromVal)
   const filterBefore = (beforeVal) => setFilterBeforeVal(beforeVal)
 
-  // Load data
+  const [filtersState, setFiltersState] = useState([])
 
   useEffect(() => {
-    async function getData() {
-      setIsLoading(true)
+    let urlString = !filterName ? '' : `&q=${filterName}`
+    let urlAuthor = !filterAuthor ? '' : `&authorId=${filterAuthor}`
+    let urlLocation = !filterLocation ? '' : `&locationId=${filterLocation}`
+    let urlFrom = !filterFromVal ? '' : `&created_gte=${filterFromVal}`
+    let urlBefore = !filterBeforeVal ? '' : `&created_lte=${filterBeforeVal}` 
+    
+    setFiltersState([urlString, urlAuthor, urlLocation, urlFrom, urlBefore])
 
-      let urlString = !filterName ? '' : `&q=${filterName}`
-      let urlAuthor = !filterAuthor ? '' : `&authorId=${filterAuthor}`
-      let urlLocation = !filterLocation ? '' : `&locationId=${filterLocation}`
-      let urlFrom = !filterFromVal ? '' : `&created_gte=${filterFromVal}`
-      let urlBefore = !filterBeforeVal ? '' : `&created_lte=${filterBeforeVal}`    
-      let filtersArray = [urlString, urlAuthor, urlLocation, urlFrom, urlBefore]
-           
-      let string = `${initUrl}?${filtersArray.join('')}`
-
-      const res1 = await axios.get(string)
-      const res2 = await axios.get(`https://test-front.framework.team/authors`)
-      const res3 = await axios.get(`https://test-front.framework.team/locations`)
-      setPaintings(res1.data)
-      setAuthors(res2.data)
-      setLocations(res3.data)
-      setIsLoading(false)
-    }
-    getData()
   }, [filterName, filterAuthor, filterLocation, filterFromVal, filterBeforeVal])
- 
-  const loader = <h1>Loading...</h1>
 
   // Pagination values
 
@@ -108,34 +93,6 @@ function Gallery() {
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber)
   }
-  
-  // Load elements
- 
-  useEffect(() => {
-    async function displayElements() {
-      setIsLoading(true)
-
-      let urlString = !filterName ? '' : `&q=${filterName}`
-      let urlAuthor = !filterAuthor ? '' : `&authorId=${filterAuthor}`
-      let urlLocation = !filterLocation ? '' : `&locationId=${filterLocation}`
-      let urlFrom = !filterFromVal ? '' : `&created_gte=${filterFromVal}`
-      let urlBefore = !filterBeforeVal ? '' : `&created_lte=${filterBeforeVal}`    
-      let filtersArray = [urlString, urlAuthor, urlLocation, urlFrom, urlBefore]
-           
-      let firstString = initUrl + `?_page=${currentPage}&_limit=${elementsPerPage}`
-      let finalString = firstString + filtersArray.join('')
-      
-      const res = await axios.get(finalString)
-      setElements(res.data)
-      const res2 = await axios.get(`https://test-front.framework.team/authors`)
-      const res3 = await axios.get(`https://test-front.framework.team/locations`)
-      setAuthors(res2.data)
-      setLocations(res3.data)
-
-      setIsLoading(false)
-    }
-    displayElements()
-  }, [currentPage, elementsPerPage, filterName, filterAuthor, filterLocation, filterFromVal, filterBeforeVal])
 
   // Add authors and locations
 
@@ -159,7 +116,38 @@ function Gallery() {
     })
   }, [locations, currentPage])
 
+  // Load data and elements on page
+
+  useEffect(() => {
+    async function getData() {
+      setIsLoading(true)
+      
+      let string = `${initUrl}?${filtersState.join('')}`
+      
+      const res1 = await axios.get(string)
+      setPaintings(res1.data)
+      
+      let firstString = initUrl + `?_page=${currentPage}&_limit=${elementsPerPage}`
+      let finalString = firstString + filtersState.join('')
+      
+      const res2 = await axios.get(finalString)
+      setElements(res2.data)
+
+      const res3 = await axios.get(`https://test-front.framework.team/authors`)
+      const res4 = await axios.get(`https://test-front.framework.team/locations`)
+      setAuthors(res3.data)
+      setLocations(res4.data)
+
+      setIsLoading(false)     
+    }
+
+    getData()
+  }, [filtersState, currentPage, elementsPerPage])
+ 
+
   // Create elements
+
+  const loader = <h1>Loading...</h1>
         
   const paintingsEls = elements.map(el => {
     return <Card 
@@ -196,10 +184,11 @@ function Gallery() {
         <div className="gallery__card-container">
           {isLoading ? loader : paintingsEls}
         </div>
-        <Pagination_c 
+        <Pagination 
           elementsPerPage={elementsPerPage} 
           totalElements={totalElements}
           paginate={paginate}
+          filtersState={filtersState}
         />
       </div>
     </div>
