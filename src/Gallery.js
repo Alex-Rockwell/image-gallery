@@ -53,11 +53,13 @@ function Gallery() {
 
   // Get search params
 
-  // Сделано извлечение из поисковой строки фильтра по имени (для примера)
-  // Также можно извлечь остальные фильтры и занести их в useContext
+  // Получение фильтров из поисковой строки сделано только для имени (для примера)
+  // Можно сделать то же с другими фильтрами и вынести их в useEffect 
+  // но тогда фильтры нельзя будет сбросить перезагрузкой страницы
   
   const [searchParams] = useSearchParams();
   const q = searchParams.get('q') || ''
+
   // let authorId = searchParams.get('authorId') || ''
   // let locationId = searchParams.get('locationId') || ''
   // let created_gte = searchParams.get('created_gte') || ''
@@ -180,7 +182,7 @@ function Gallery() {
 
   useEffect(() => {
     navigate({
-      pathname: '/paintings',
+      pathname: 'image-gallery/',
       search: `?_page=${currentPage}&_limit=${elementsPerPage}&${filtersState.join('')}`
     })
   }, [filtersState, currentPage, elementsPerPage,])

@@ -10,6 +10,7 @@ ReactDOM.render(
       <Router>
         <Routes>
           <Route path='*' element={<App/>}/>
+          {/* <App /> */}
         </Routes>
       </Router>
     </React.StrictMode>,
