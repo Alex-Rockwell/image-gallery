@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useEffect, useState } from "react"
+import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
 import Card from "./Card"
 import Filters from "./Filters";
@@ -8,7 +8,9 @@ import {ReactComponent as Logo} from './svg/logo.svg'
 import {ReactComponent as DarkModeIcon} from './svg/darkModeIcon.svg'
 import './Gallery.css'
 import { useThemeContext, useThemeToggle } from "./ThemeProvider";
+import { useNavigate, useSearchParams } from 'react-router-dom'
 const initUrl = `https://test-front.framework.team/paintings`
+
 
 
 function Gallery() {
@@ -49,9 +51,21 @@ function Gallery() {
     setElementsPerPage(getElementsPerPage(width))
   }, [width])
 
+  // Get search params
+
+  // Сделано извлечение из поисковой строки фильтра по имени (для примера)
+  // Также можно извлечь остальные фильтры и занести их в useContext
+  
+  const [searchParams] = useSearchParams();
+  const q = searchParams.get('q') || ''
+  // let authorId = searchParams.get('authorId') || ''
+  // let locationId = searchParams.get('locationId') || ''
+  // let created_gte = searchParams.get('created_gte') || ''
+  // let created_lte = searchParams.get('created_lte') || ''
+
   // Filters
 
-  const [filterName, setFilterName] = useState('')
+  const [filterName, setFilterName] = useState(q)
   const [filterAuthor, setFilterAuthor] = useState('')
   const [filterLocation, setFilterLocation] = useState('')
   const [filterFromVal, setFilterFromVal] = useState('')
@@ -121,7 +135,7 @@ function Gallery() {
   useEffect(() => {
     async function getData() {
       setIsLoading(true)
-      
+    
       const string = `${initUrl}?${filtersState.join('')}`
       
       const res1 = await axios.get(string)
@@ -160,7 +174,16 @@ function Gallery() {
     />
   })
 
+  // Set query string
 
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    navigate({
+      pathname: '/paintings',
+      search: `?_page=${currentPage}&_limit=${elementsPerPage}&${filtersState.join('')}`
+    })
+  }, [filtersState, currentPage, elementsPerPage,])
 
   return (
     <div className={`gallery ${darkMode ? 'gallery--dm' : ''}`}>
@@ -180,6 +203,7 @@ function Gallery() {
           filterByLocation={filterByLocation}
           filterFrom={filterFrom}
           filterBefore={filterBefore}
+          q={q}
         />
         <div className="gallery__card-container">
           {isLoading ? loader : paintingsEls}
