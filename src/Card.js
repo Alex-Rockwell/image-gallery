@@ -1,9 +1,10 @@
-import './Card.css'
+import React from 'react';
+import './Card.css';
 
 function Card(props) {
-  const {imageUrl, cardName, authorName, created, locationName} = props
-  const finalUrl = `https://test-front.framework.team${imageUrl}`
-  
+  const {imageUrl, cardName, authorName, created, locationName} = props;
+  const finalUrl = `https://test-front.framework.team${imageUrl}`;
+
   return (
     <div className='card'>
       <img className='card__img' src={finalUrl} alt="painting"/>
@@ -20,7 +21,7 @@ function Card(props) {
         </h3>
       </div>
     </div>
-  )
+  );
 }
 
-export default Card
+export default Card;
