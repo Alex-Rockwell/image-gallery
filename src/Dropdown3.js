@@ -9,7 +9,7 @@ function Dropdown3({title='Select option', filterFrom, filterBefore}) {
   const [selected] = useState(title)
   const [fromVal, setFromVal] = useState('')
   const [beforeVal, setBeforeVal] = useState('')
-  const darkMode = useThemeContext()
+  const {darkMode} = useThemeContext()
     
   const dropdownRef = useRef()
   useClickOutside(dropdownRef, () => {

@@ -10,7 +10,7 @@ import { useThemeContext } from "./ThemeProvider"
 function Pagination_c({elementsPerPage, totalElements, paginate}) {
   const pageNumbers = [1]
   const [currentPage, setCurrentPage] = useState(1)
-  const darkMode = useThemeContext()
+  const {darkMode} = useThemeContext()
 
   for (let i = 2; i <= Math.ceil(totalElements / elementsPerPage); i++) {
     pageNumbers.push(i)

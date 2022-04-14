@@ -7,7 +7,7 @@ import Pagination from "./Pagination";
 import {ReactComponent as Logo} from './svg/logo.svg'
 import {ReactComponent as DarkModeIcon} from './svg/darkModeIcon.svg'
 import './Gallery.css'
-import { useThemeContext, useThemeToggle } from "./ThemeProvider";
+import { useThemeContext } from "./ThemeProvider";
 import { useNavigate, useSearchParams } from 'react-router-dom'
 const initUrl = `https://test-front.framework.team/paintings`
 
@@ -20,8 +20,7 @@ function Gallery() {
   const [isLoading, setIsLoading] = useState(false)
   const [elements, setElements] = useState([])
 
-  const darkMode = useThemeContext()
-  const toggleTheme = useThemeToggle()
+  const {darkMode, toggleTheme} = useThemeContext()
 
   // Set elements per page
   
@@ -52,10 +51,6 @@ function Gallery() {
   }, [width])
 
   // Get search params
-
-  // Получение фильтров из поисковой строки сделано только для имени (для примера)
-  // Можно сделать то же с другими фильтрами и вынести их в useEffect 
-  // но тогда фильтры нельзя будет сбросить перезагрузкой страницы
   
   const [searchParams] = useSearchParams();
   const q = searchParams.get('q') || ''

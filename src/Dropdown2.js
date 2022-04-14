@@ -7,7 +7,7 @@ import useClickOutside from './hooks/useClickOutside'
 function Dropdown2({optionsList, title='Select option', filter}) {
   const [isOpen, setIsOpen] = useState(false)
   const [selected, setSelected] = useState(title)
-  const darkMode = useThemeContext()
+  const {darkMode} = useThemeContext()
     
   const dropdownRef = useRef()
   useClickOutside(dropdownRef, () => {

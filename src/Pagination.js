@@ -11,7 +11,7 @@ function Pagination(props) {
   const {elementsPerPage, totalElements, paginate, filtersState} = props
   const pageNumbers = [1]
   const [currentPage, setCurrentPage] = useState(1)
-  const darkMode = useThemeContext()
+  const {darkMode} = useThemeContext()
   
   for (let i = 2; i <= Math.ceil(totalElements / elementsPerPage); i++) {
     pageNumbers.push(i)
