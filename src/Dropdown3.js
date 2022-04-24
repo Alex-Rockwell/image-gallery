@@ -3,14 +3,19 @@ import {useRef, useState} from 'react';
 import './Dropdown.css';
 import {useThemeContext} from './ThemeProvider';
 import useClickOutside from './hooks/useClickOutside';
+import {useFilterContext} from './FiltersProvider';
 
 
-function Dropdown3({title='Select option', filterFrom, filterBefore}) {
+function Dropdown3({title='Select option'}) {
   const [isOpen, setIsOpen] = useState(false);
   const [selected] = useState(title);
   const [fromVal, setFromVal] = useState('');
   const [beforeVal, setBeforeVal] = useState('');
   const {darkMode} = useThemeContext();
+
+  const {setFilters} = useFilterContext();
+  const filterFrom = setFilters.filterFrom;
+  const filterBefore = setFilters.filterBefore;
 
   const dropdownRef = useRef();
   useClickOutside(dropdownRef, () => {

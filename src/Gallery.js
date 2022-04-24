@@ -9,6 +9,7 @@ import {ReactComponent as DarkModeIcon} from './svg/darkModeIcon.svg';
 import './Gallery.css';
 import {useThemeContext} from './ThemeProvider';
 import {useNavigate, useSearchParams} from 'react-router-dom';
+import {useFilterContext} from './FiltersProvider';
 const initUrl = `https://test-front.framework.team/paintings`;
 
 
@@ -49,43 +50,6 @@ function Gallery() {
     setElementsPerPage(getElementsPerPage(width));
   }, [width]);
 
-  // Get search params
-
-  const [searchParams] = useSearchParams();
-  const q = searchParams.get('q') || '';
-
-  // let authorId = searchParams.get('authorId') || ''
-  // let locationId = searchParams.get('locationId') || ''
-  // let created_gte = searchParams.get('created_gte') || ''
-  // let created_lte = searchParams.get('created_lte') || ''
-
-  // Filters
-
-  const [filterName, setFilterName] = useState(q);
-  const [filterAuthor, setFilterAuthor] = useState('');
-  const [filterLocation, setFilterLocation] = useState('');
-  const [filterFromVal, setFilterFromVal] = useState('');
-  const [filterBeforeVal, setFilterBeforeVal] = useState('');
-
-  const filterByName = (str) => setFilterName(str);
-  const filterByAuthor = (id) => setFilterAuthor(id);
-  const filterByLocation = (id) => setFilterLocation(id);
-  const filterFrom = (fromVal) => setFilterFromVal(fromVal);
-  const filterBefore = (beforeVal) => setFilterBeforeVal(beforeVal);
-
-  const [filtersState, setFiltersState] = useState([]);
-
-  useEffect(() => {
-    const urlString = !filterName ? '' : `&q=${filterName}`;
-    const urlAuthor = !filterAuthor ? '' : `&authorId=${filterAuthor}`;
-    const urlLocation = !filterLocation ? '' : `&locationId=${filterLocation}`;
-    const urlFrom = !filterFromVal ? '' : `&created_gte=${filterFromVal}`;
-    const urlBefore = !filterBeforeVal ? '' : `&created_lte=${filterBeforeVal}`;
-
-    setFiltersState([urlString, urlAuthor, urlLocation, urlFrom, urlBefore]);
-  }, [filterName, filterAuthor, filterLocation, filterFromVal,
-    filterBeforeVal]);
-
   // Pagination values
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -103,6 +67,42 @@ function Gallery() {
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+
+
+  // Get search params
+  // Filters
+
+  const {filtersState} = useFilterContext();
+
+  // Load data and elements on page
+
+  useEffect(() => {
+    async function getData() {
+      const urlBase = 'https://test-front.framework.team';
+      setIsLoading(true);
+
+      const string = `${initUrl}?${filtersState.join('')}`;
+
+      const res1 = await axios.get(string);
+      setPaintings(res1.data);
+
+      const firstString = initUrl +
+        `?_page=${currentPage}&_limit=${elementsPerPage}`;
+      const finalString = firstString + filtersState.join('');
+
+      const res2 = await axios.get(finalString);
+      setElements(res2.data);
+
+      const res3 = await axios.get(urlBase + '/authors');
+      const res4 = await axios.get(urlBase + '/locations');
+      setAuthors(res3.data);
+      setLocations(res4.data);
+
+      setIsLoading(false);
+    }
+
+    getData();
+  }, [filtersState, currentPage, elementsPerPage]);
 
   // Add authors and locations
 
@@ -126,34 +126,17 @@ function Gallery() {
     });
   }, [locations, currentPage]);
 
-  // Load data and elements on page
+  // Set query string
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    async function getData() {
-      setIsLoading(true);
-
-      const string = `${initUrl}?${filtersState.join('')}`;
-
-      const res1 = await axios.get(string);
-      setPaintings(res1.data);
-
-      const firstString = initUrl +
-        `?_page=${currentPage}&_limit=${elementsPerPage}`;
-      const finalString = firstString + filtersState.join('');
-
-      const res2 = await axios.get(finalString);
-      setElements(res2.data);
-
-      const res3 = await axios.get(`https://test-front.framework.team/authors`);
-      const res4 = await axios.get(`https://test-front.framework.team/locations`);
-      setAuthors(res3.data);
-      setLocations(res4.data);
-
-      setIsLoading(false);
-    }
-
-    getData();
-  }, [filtersState, currentPage, elementsPerPage]);
+    navigate({
+      pathname: 'image-gallery/',
+      search: `?_page=${currentPage}
+        &_limit=${elementsPerPage}&${filtersState.join('')}`,
+    });
+  }, [filtersState, currentPage, elementsPerPage, navigate]);
 
 
   // Create elements
@@ -171,17 +154,8 @@ function Gallery() {
     />;
   });
 
-  // Set query string
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    navigate({
-      pathname: 'image-gallery/',
-      search: `?_page=${currentPage}
-        &_limit=${elementsPerPage}&${filtersState.join('')}`,
-    });
-  }, [filtersState, currentPage, elementsPerPage, navigate]);
+  const [searchParams] = useSearchParams();
+  const q = searchParams.get('q') || '';
 
   return (
     <div className={`gallery ${darkMode ? 'gallery--dm' : ''}`}>
@@ -195,13 +169,8 @@ function Gallery() {
           />
         </header>
         <Filters
-          filterByName={filterByName}
           authors={authors}
-          filterByAuthor={filterByAuthor}
           locations={locations}
-          filterByLocation={filterByLocation}
-          filterFrom={filterFrom}
-          filterBefore={filterBefore}
           q={q}
         />
         <div className="gallery__card-container">
