@@ -137,7 +137,8 @@ function Gallery() {
       const res1 = await axios.get(string);
       setPaintings(res1.data);
 
-      const firstString = initUrl + `?_page=${currentPage}&_limit=${elementsPerPage}`;
+      const firstString = initUrl +
+        `?_page=${currentPage}&_limit=${elementsPerPage}`;
       const finalString = firstString + filtersState.join('');
 
       const res2 = await axios.get(finalString);
@@ -177,9 +178,10 @@ function Gallery() {
   useEffect(() => {
     navigate({
       pathname: 'image-gallery/',
-      search: `?_page=${currentPage}&_limit=${elementsPerPage}&${filtersState.join('')}`,
+      search: `?_page=${currentPage}
+        &_limit=${elementsPerPage}&${filtersState.join('')}`,
     });
-  }, [filtersState, currentPage, elementsPerPage]);
+  }, [filtersState, currentPage, elementsPerPage, navigate]);
 
   return (
     <div className={`gallery ${darkMode ? 'gallery--dm' : ''}`}>
@@ -187,7 +189,8 @@ function Gallery() {
         <header className="gallery__header">
           <Logo />
           <DarkModeIcon
-            className={`gallery__darkmode-icon ${darkMode ? 'gallery__darkmode-icon--dm' : ''}`}
+            className={`gallery__darkmode-icon 
+              ${darkMode ? 'gallery__darkmode-icon--dm' : ''}`}
             onClick={toggleTheme}
           />
         </header>

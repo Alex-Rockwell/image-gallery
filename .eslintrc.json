@@ -19,9 +19,9 @@
         "react"
     ],
     "rules": {
+        "eslint max-len": "off",
         "require-jsdoc": "off",
         "react/prop-types": "off",
-        "linebreak-style": 0,
-        "eslint max-len": { "code": 110 }
+        "linebreak-style": 0
     }
 }

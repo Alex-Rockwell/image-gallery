@@ -34,16 +34,20 @@ function Pagination(props) {
   // Class names
 
   const isBeginActive = (currentPage === pageNumbers[0]) ? false : true;
-  const isEndActive = (pageNumbers.length < 2 || currentPage === pageNumbers[pageNumbers.length - 1]) ? false : true;
+  const isEndActive = (pageNumbers.length < 2 ||
+    currentPage === pageNumbers[pageNumbers.length - 1]) ? false : true;
 
   const beginBtns = `pagination__item 
-    ${isBeginActive ? 'pagination__item--hoverable' : 'pagination__item--disable'} 
+    ${isBeginActive ?
+      'pagination__item--hoverable' :
+      'pagination__item--disable'} 
     ${darkMode ? 'pagination__item--dm' : ''} 
     ${(darkMode && isBeginActive) ? 'pagination__item--hoverabledm' : ''} 
     ${(darkMode && !isBeginActive) ? 'pagination__item--disabledm' : ''}`;
 
   const endBtns = `pagination__item 
-    ${isEndActive ? 'pagination__item--hoverable' : 'pagination__item--disable'} 
+    ${isEndActive ?
+      'pagination__item--hoverable' : 'pagination__item--disable'} 
     ${darkMode ? 'pagination__item--dm' : ''} 
     ${(darkMode && isEndActive) ? 'pagination__item--hoverabledm' : ''} 
     ${(darkMode && !isEndActive) ? 'pagination__item--disabledm' : ''}`;
@@ -52,10 +56,12 @@ function Pagination(props) {
 
   const page = (number) => {
     return `pagination__item 
-    ${(number === currentPage) ? 'pagination__item--active' : 'pagination__item--hoverable'} 
+    ${(number === currentPage) ?
+      'pagination__item--active' : 'pagination__item--hoverable'} 
     ${darkMode ? 'pagination__item--dm' : ''} 
     ${number === currentPage && darkMode ? 'pagination__item--activedm' : ''} 
-    ${!(number === currentPage) && darkMode ? 'pagination__item--hoverabledm' : ''} 
+    ${!(number === currentPage) && darkMode ?
+      'pagination__item--hoverabledm' : ''} 
     `;
   };
 
@@ -66,7 +72,8 @@ function Pagination(props) {
       slicedNumbers.length = 3;
     }
     if (!isEndActive) {
-      slicedNumbers = slicedNumbers.slice(slicedNumbers.length - 3, slicedNumbers.length);
+      slicedNumbers = slicedNumbers
+          .slice(slicedNumbers.length - 3, slicedNumbers.length);
     }
     if (isBeginActive && isEndActive) {
       slicedNumbers = slicedNumbers.slice(currentPage - 2, currentPage + 1);

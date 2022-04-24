@@ -7,7 +7,11 @@ import {useThemeContext} from './ThemeProvider';
 
 
 function Filters(props) {
-  const {filterByName, authors, filterByAuthor, locations, filterByLocation, filterFrom, filterBefore, q} = props;
+  const {
+    filterByName,
+    authors, filterByAuthor,
+    locations, filterByLocation,
+    filterFrom, filterBefore, q} = props;
   const {darkMode} = useThemeContext();
   const [searchName, setSearchName] = useState(q || '');
   const handleSearchName = (e) => {
