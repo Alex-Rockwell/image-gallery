@@ -8,7 +8,7 @@ import {ReactComponent as Logo} from './svg/logo.svg';
 import {ReactComponent as DarkModeIcon} from './svg/darkModeIcon.svg';
 import './Gallery.css';
 import {useThemeContext} from './ThemeProvider';
-import {useNavigate, useSearchParams} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import {useFilterContext} from './FiltersProvider';
 const initUrl = `https://test-front.framework.team/paintings`;
 
@@ -154,9 +154,6 @@ function Gallery() {
     />;
   });
 
-  const [searchParams] = useSearchParams();
-  const q = searchParams.get('q') || '';
-
   return (
     <div className={`gallery ${darkMode ? 'gallery--dm' : ''}`}>
       <div className="container">
@@ -171,7 +168,6 @@ function Gallery() {
         <Filters
           authors={authors}
           locations={locations}
-          q={q}
         />
         <div className="gallery__card-container">
           {isLoading ? loader : paintingsEls}
